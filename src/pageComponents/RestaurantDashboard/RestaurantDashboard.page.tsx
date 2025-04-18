@@ -14,18 +14,22 @@ import { useTranslation } from "react-i18next";
 import { useUserSubscription } from "~/shared/hooks/useUserSubscription";
 import QRCode from "qrcode.react";
 import { SocialMediaHandlesForm } from "./molecules/SocialMediaHandles/SocialMediaHandles";
-import { openLemonSqueezy } from "~/utils/payments";
+import { type MenuWithProfile } from "~/types/menu";
 
 export const RestaurantDashboard = ({
   params: { slug },
 }: {
   params: { slug: string };
 }) => {
-  const { data, error, isLoading } = api.menus.getMenuBySlug.useQuery({ slug });
+  const { data, error, isLoading } = api.menus.getMenuBySlug.useQuery({ slug }) as {
+    data: MenuWithProfile | undefined;
+    error: unknown;
+    isLoading: boolean;
+  };
   const { toast } = useToast();
   const router = useRouter();
   const { t, i18n } = useTranslation();
-  const { isSubscribed } = useUserSubscription();
+  const { isSubscribed, isSubscriptionLoading } = useUserSubscription();
   const {
     mutateAsync: createPremiumCheckout,
     isLoading: isCreatePremiumCheckoutLoading,
@@ -55,7 +59,7 @@ export const RestaurantDashboard = ({
     }
   };
 
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading || isSubscriptionLoading) return <LoadingScreen />;
 
   if (error) {
     toast({
@@ -66,6 +70,9 @@ export const RestaurantDashboard = ({
     redirect("/dashboard");
   }
 
+  if (!data) {
+    return null;
+  }
   return (
     <div className="flex w-full max-w-3xl flex-col  gap-6">
       <div className="relative aspect-[2/1] h-[200px]">
@@ -122,14 +129,11 @@ export const RestaurantDashboard = ({
           ) : (
             <Button
               variant="default"
-              loading={isCreatePremiumCheckoutLoading}
               size="lg"
-              onClick={async () => {
-                const checkoutUrl = await createPremiumCheckout({
-                  language: i18n.language as "en" | "pl",
-                });
-
-                openLemonSqueezy(checkoutUrl);
+              onClick={() => {
+                const message = `Hola quisera saber sobre los planes disponibles`;
+                const whatsappUrl = `https://wa.me/584247607637?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
               }}
             >
               {t("restaurantDashboard.upgradeAccount")}
