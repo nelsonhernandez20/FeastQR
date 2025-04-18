@@ -10,8 +10,8 @@ export const getServiceSupabase = () =>
     env.SUPABASE_SERVICE_KEY,
     {
       auth: {
-        autoRefreshToken: false,
-        persistSession: false,
+        autoRefreshToken: true,
+        persistSession: true,
       },
     },
   );

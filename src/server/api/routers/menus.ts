@@ -136,12 +136,25 @@ const getFullMenu = async (slug: string, db: PrismaClient) =>
   });
 
 export const menusRouter = createTRPCRouter({
-  getMenus: privateProcedure.query(({ ctx }) => {
-    return ctx.db.menus.findMany({
+  getMenus: privateProcedure.query(async ({ ctx }) => {
+    const menus = await ctx.db.menus.findMany({
       where: {
         userId: ctx.user.id,
       },
     });
+
+    return menus.map((menu) => ({
+      ...menu,
+      logoImageUrl: menu.logo_image_url,
+      backgroundImageUrl: menu.background_image_url,
+      contactNumber: menu.contact_number,
+      facebookUrl: menu.facebook_url,
+      instagramUrl: menu.instagram_url,
+      googleReviewUrl: menu.google_review_url,
+      createdAt: menu.created_at,
+      updatedAt: menu.updated_at,
+      userId: menu.user_id,
+    }));
   }),
 
   getDishesByCategory: privateProcedure
@@ -187,6 +200,22 @@ export const menusRouter = createTRPCRouter({
   upsertMenu: privateProcedure
     .input(menuValidationSchema)
     .mutation(async ({ ctx, input }) => {
+      let polishLanguage = await ctx.db.languages.findFirst({
+        where: {
+          name: POLISH_LANGUAGE_NAME,
+        },
+      });
+
+      if (!polishLanguage) {
+        polishLanguage = await ctx.db.languages.create({
+          data: {
+            name: POLISH_LANGUAGE_NAME,
+            isoCode: "PL",
+            flagUrl: "https://flagsapi.com/PL/flat/64.png",
+          },
+        });
+      }
+
       return await ctx.db.menus.upsert({
         where: {
           id: input.id || "00000000-0000-0000-0000-000000000000",
@@ -206,11 +235,7 @@ export const menusRouter = createTRPCRouter({
           menuLanguages: {
             create: {
               isDefault: true,
-              languages: {
-                connect: {
-                  name: POLISH_LANGUAGE_NAME,
-                },
-              },
+              languageId: polishLanguage.id,
             },
           },
         },

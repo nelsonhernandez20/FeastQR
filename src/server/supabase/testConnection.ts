@@ -1,4 +1,5 @@
 import { getServiceSupabase } from "./supabaseClient";
+import { storageBucketsNames } from "./supabaseClient";
 
 async function testSupabaseConnection() {
   try {
@@ -14,8 +15,28 @@ async function testSupabaseConnection() {
       return false;
     }
     
+    // Verificar si el bucket menus-files existe
+    const menusBucketExists = buckets.some(bucket => bucket.name === storageBucketsNames.menus);
+    
+    if (!menusBucketExists) {
+      console.log('Bucket menus-files no existe, creando...');
+      const { error: createError } = await supabase
+        .storage
+        .createBucket(storageBucketsNames.menus, {
+          public: false,
+          fileSizeLimit: 52428800, // 50MB
+        });
+      
+      if (createError) {
+        console.error('Error al crear el bucket:', createError);
+        return false;
+      }
+      console.log('Bucket menus-files creado exitosamente');
+    } else {
+      console.log('Bucket menus-files ya existe');
+    }
+    
     console.log('Conexión exitosa a Supabase');
-    console.log('Buckets disponibles:', buckets);
     return true;
     
   } catch (error) {
@@ -25,6 +46,10 @@ async function testSupabaseConnection() {
 }
 
 // Ejecutar la prueba
-testSupabaseConnection().then(result => {
-  console.log('Resultado de la prueba:', result ? 'Éxito' : 'Fallo');
+testSupabaseConnection().then(success => {
+  if (success) {
+    console.log('Prueba completada exitosamente');
+  } else {
+    console.error('La prueba falló');
+  }
 }); 

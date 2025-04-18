@@ -7,7 +7,6 @@ import { useState } from "react";
 
 import { type AppRouter } from "~/server/api/root";
 import { getUrl, transformer } from "./shared";
-import { supabase } from "~/server/supabase/supabaseClient";
 
 export const api = createTRPCReact<AppRouter>({
   overrides: {
@@ -50,10 +49,13 @@ export function TRPCReactProvider(props: {
           url: getUrl(),
           async headers() {
             const heads = new Map(props.headers);
-            const { data } = await supabase().auth.getSession();
+            const accessToken = document.cookie
+              .split("; ")
+              .find((row) => row.startsWith("access-token="))
+              ?.split("=")[1];
 
-            if (data.session) {
-              heads.set("authorization", data.session.access_token);
+            if (accessToken) {
+              heads.set("authorization", accessToken);
             }
 
             heads.set("x-trpc-source", "react");

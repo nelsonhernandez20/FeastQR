@@ -28,11 +28,13 @@ const setCookies = (session: Session | null) => {
 
     document.cookie = `access-token=${session.access_token}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
     document.cookie = `refresh-token=${session.refresh_token}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
+    console.log("Auth cookies set");
   } else {
     const expires = new Date(0).toUTCString();
 
     document.cookie = `access-token=; path=/; expires=${expires}; SameSite=Lax; secure`;
     document.cookie = `refresh-token=; path=/; expires=${expires}; SameSite=Lax; secure`;
+    console.log("Auth cookies cleared");
   }
 };
 
@@ -52,17 +54,25 @@ export const AuthProvider = ({
   const [isLoading, setIsLoading] = useState(!initialUser);
 
   useEffect(() => {
+    console.log("AuthProvider mounted, initial user:", initialUser ? "exists" : "null");
+    
     void supabase()
       .auth.getSession()
       .then(({ data: { session } }) => {
+        console.log("getSession result:", session ? "session exists" : "no session");
         setUserSession(session);
         setUser(session?.user ?? null);
         setCookies(session);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error getting session:", error);
         setIsLoading(false);
       });
 
     const { data: authListener } = supabase().auth.onAuthStateChange(
       (_event, session) => {
+        console.log("Auth state changed:", _event, session ? "session exists" : "no session");
         setUserSession(session);
         setUser(session?.user ?? null);
         setCookies(session);

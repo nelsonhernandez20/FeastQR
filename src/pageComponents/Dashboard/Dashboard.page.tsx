@@ -9,11 +9,13 @@ import { LoadingScreen } from "~/components/Loading";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useToast } from "~/components/ui/use-toast";
 
 export function DashboardPage() {
-  const { data: menus, isLoading } = api.menus.getMenus.useQuery();
+  const { data: menus, isLoading, error } = api.menus.getMenus.useQuery();
   const { t } = useTranslation();
-
+  const { toast } = useToast();
+  console.log(menus,'menux');
   if (isLoading) return <LoadingScreen />;
 
   return (
@@ -34,7 +36,7 @@ export function DashboardPage() {
           {menus?.length ? (
             <div className="divide-y divide-border rounded-md border">
               {menus
-                .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+                .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
                 .map((menu) => (
                   <MenuItem key={menu.id} menu={menu} />
                 ))}

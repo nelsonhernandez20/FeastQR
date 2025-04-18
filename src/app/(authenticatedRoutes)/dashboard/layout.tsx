@@ -2,6 +2,7 @@
 
 import { DashboardNav } from "~/components/DashboardNav";
 import { TranslatedText } from "~/components/TranslatedText";
+import { withPrivateRoute } from "~/providers/AuthProvider/withPrivateRoute";
 
 const sidebarNavItems = [
   {
@@ -30,7 +31,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="flex w-full flex-1 flex-col gap-4 md:flex-row">
-        <aside className=" flex flex-col  md:w-[200px]">
+        <aside className="flex flex-col md:w-[200px]">
           <DashboardNav items={sidebarNavItems} />
         </aside>
         {children}
@@ -39,4 +40,4 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default RootLayout;
+export default withPrivateRoute(RootLayout);
