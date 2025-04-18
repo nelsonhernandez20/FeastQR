@@ -1,11 +1,26 @@
 import { MenuOperations } from "./MenuOperations";
 import Link from "next/link";
-import { type menus as Menu } from "@prisma/client";
+import { type menus } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
 
+// Define the transformed menu type based on the getMenus function
+interface TransformedMenu extends menus {
+  logoImageUrl: string | null;
+  backgroundImageUrl: string | null;
+  contactNumber: string | null;
+  facebookUrl: string | null;
+  instagramUrl: string | null;
+  googleReviewUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  slug: string;
+  address: string;
+}
+
 interface MenuItemProps {
-  menu: Menu;
+  menu: TransformedMenu;
 }
 
 export function MenuItem({ menu }: MenuItemProps) {
