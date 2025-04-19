@@ -405,6 +405,7 @@ model Menus {
   categories         Categories[]
   dishes             Dishes[]
   menuLanguages      MenuLanguages[]
+  notifications      Notifications[]
   profiles           Profiles        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([slug], map: "idx_menus_slug")
@@ -530,5 +531,32 @@ enum TagType {
   lactose_free
 
   @@map("tag_type")
+  @@schema("public")
+}
+
+model Notifications {
+  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuSlug          String    @map("menu_slug")
+  customerName      String    @map("customer_name")
+  customerPhone     String    @map("customer_phone")
+  customerEmail     String?   @map("customer_email")
+  title             String
+  description       String
+  type              String
+  locationInfo      String    @map("location_info")
+  additionalNotes   String?   @map("additional_notes")
+  paymentProofUrl   String?   @map("payment_proof_url")
+  paymentProofFilename String? @map("payment_proof_filename")
+  paymentProofBucket String?  @map("payment_proof_bucket")
+  paymentProofPath  String?   @map("payment_proof_path")
+  paymentAmount     Float?    @map("payment_amount")
+  paymentCurrency   String?   @map("payment_currency")
+  paymentDate       DateTime? @map("payment_date")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  menus             Menus     @relation(fields: [menuSlug], references: [slug], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([menuSlug])
+  @@map("notifications")
   @@schema("public")
 }

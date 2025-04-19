@@ -2,6 +2,13 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Button } from "~/components/ui/button";
+import { ImageUploadInput } from "~/components/ImageUploadInput/ImageUploadInput";
+import { useForm } from "react-hook-form";
+import { type FieldValues } from "react-hook-form";
 
 import { getDefaultLanguage } from "~/utils/getDefaultLanguage";
 import { type FullMenuOutput, parseDishes } from "~/utils/parseDishes";
@@ -16,10 +23,27 @@ import { Badge } from "../ui/badge";
 import { tagsTranslations } from "~/utils/tags";
 import { notEmpty } from "~/utils/utils";
 import { assert } from "~/utils/assert";
+import { type TagType } from "@prisma/client";
+import { api } from "~/trpc/react";
+import { toast } from "react-hot-toast";
+
+interface OrderFormData extends FieldValues {
+  name: string;
+  phone: string;
+  locationInfo: string;
+  additionalNotes: string;
+  paymentProof?: File;
+  email: string;
+}
 
 export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
   const defaultLanguageSet = useRef(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [selectedDishes, setSelectedDishes] = useState<Record<string, number>>({});
+  const [showOrderDialog, setShowOrderDialog] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [paymentProof, setPaymentProof] = useState<File | null>(null);
+  const form = useForm<OrderFormData>();
   const { t } = useTranslation();
 
   const defaultLanguage = getDefaultLanguage(menu.menuLanguages);
@@ -33,6 +57,105 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
     menu,
     selectedLanguage || defaultLanguage.languageId,
   );
+
+  const handleQuantityChange = (dishId: string, change: number) => {
+    setSelectedDishes(prev => {
+      const currentQuantity = prev[dishId] || 0;
+      const newQuantity = Math.max(0, currentQuantity + change);
+      
+      if (newQuantity === 0) {
+        const { [dishId]: _, ...rest } = prev;
+        return rest;
+      }
+      
+      return {
+        ...prev,
+        [dishId]: newQuantity
+      };
+    });
+  };
+
+  const calculateTotal = () => {
+    return Object.entries(selectedDishes).reduce((total, [dishId, quantity]) => {
+      const dish = parsedDishes
+        .flatMap(({ dishes }) => dishes)
+        .find((d) => d.id === dishId);
+      return total + (dish?.price || 0) * quantity;
+    }, 0);
+  };
+
+  const handleOrder = (withPayment: boolean) => {
+    if (withPayment) {
+      setShowPaymentDialog(true);
+    } else {
+      setShowOrderDialog(true);
+    }
+  };
+
+  const uploadPaymentProofMutation = api.upload.uploadPaymentProof.useMutation();
+  const createNotificationMutation = api.notifications.createNotification.useMutation();
+
+  const handleSubmitOrder = async () => {
+    try {
+      if (paymentProof) {
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64String = reader.result as string;
+            resolve(base64String);
+          };
+          reader.readAsDataURL(paymentProof);
+        });
+
+        const uploadResult = await uploadPaymentProofMutation.mutateAsync({
+          file: base64,
+          filename: paymentProof.name,
+          menuSlug: menu.slug,
+        });
+
+        await createNotificationMutation.mutateAsync({
+          menuSlug: menu.slug,
+          customerName: form.getValues("name"),
+          customerPhone: form.getValues("phone"),
+          customerEmail: form.getValues("email"),
+          title: t("notifications.newOrder", "New order"),
+          description: t("notifications.newOrder", "New order"),
+          type: "ORDER",
+          locationInfo: form.getValues("locationInfo"),
+          additionalNotes: form.getValues("additionalNotes"),
+          paymentAmount: calculateTotal(),
+          paymentCurrency: "USD",
+          paymentDate: new Date(),
+          paymentProofUrl: uploadResult.url,
+        });
+      } else {
+        await createNotificationMutation.mutateAsync({
+          menuSlug: menu.slug,
+          customerName: form.getValues("name"),
+          customerPhone: form.getValues("phone"),
+          customerEmail: form.getValues("email"),
+          title: t("notifications.newOrder", "New order"),
+          description: t("notifications.newOrder", "New order"),
+          type: "ORDER",
+          locationInfo: form.getValues("locationInfo"),
+          additionalNotes: form.getValues("additionalNotes"),
+          paymentAmount: calculateTotal(),
+          paymentCurrency: "USD",
+          paymentDate: new Date(),
+        });
+      }
+
+      setShowOrderDialog(false);
+      setShowPaymentDialog(false);
+      setPaymentProof(null);
+      setSelectedDishes({});
+      form.reset();
+      toast.success(t("notifications.newOrder", "New order"));
+    } catch (error) {
+      console.error(error);
+      toast.error(t("notifications.somethingWentWrong", "Something went wrong"));
+    }
+  };
 
   return (
     <div className="z-0 flex h-full w-full bg-white ">
@@ -83,6 +206,11 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                   )}
                   <ul className="flex flex-wrap gap-2 px-2">
                     {dishes.map((dish) => {
+                      const translatedTags = dish.dishesTag.map(({ tagName }) => {
+                        const translationKey = tagsTranslations[tagName as TagType];
+                        return translationKey ? t(translationKey, tagName) : tagName;
+                      }) as string[];
+
                       return (
                         <li
                           key={dish.id}
@@ -107,11 +235,24 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                               <p className="pt-1 text-sm text-slate-500">
                                 {dish.description}
                               </p>
-                              <Tags
-                                tags={dish.dishesTag.map(({ tagName }) =>
-                                  t(tagsTranslations[tagName]),
-                                )}
-                              />
+                              <Tags tags={translatedTags} />
+                              <div className="mt-2 flex items-center gap-2">
+                                <button
+                                  onClick={() => handleQuantityChange(dish.id, -1)}
+                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+                                >
+                                  -
+                                </button>
+                                <span className="min-w-[2rem] text-center">
+                                  {selectedDishes[dish.id] || 0}
+                                </span>
+                                <button
+                                  onClick={() => handleQuantityChange(dish.id, 1)}
+                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+                                >
+                                  +
+                                </button>
+                              </div>
                             </div>
                             {dish.pictureUrl && (
                               <Image
@@ -152,6 +293,186 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
             );
           })}
         </div>
+        {Object.keys(selectedDishes).length > 0 && (
+          <div className="sticky bottom-0 flex w-full justify-center gap-4 bg-white p-4 shadow-lg">
+            <button
+              onClick={() => handleOrder(false)}
+              className="rounded-lg bg-blue-500 px-6 py-2 text-white hover:bg-blue-600"
+            >
+              Ordenar
+            </button>
+            <button
+              onClick={() => handleOrder(true)}
+              className="rounded-lg bg-green-500 px-6 py-2 text-white hover:bg-green-600"
+            >
+              Ordenar y Pagar
+            </button>
+          </div>
+        )}
+
+        {/* Order Dialog */}
+        <Dialog open={showOrderDialog} onOpenChange={setShowOrderDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Confirmar Pedido</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={form.handleSubmit(handleSubmitOrder)} className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  {...form.register("name", { required: true })}
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Teléfono</Label>
+                <Input
+                  id="phone"
+                  {...form.register("phone", { required: true })}
+                  placeholder="Tu teléfono"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="locationInfo">Ubicación</Label>
+                <Input
+                  id="locationInfo"
+                  {...form.register("locationInfo", { required: true })}
+                  placeholder="Mesa 1, Delivery, etc."
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="additionalNotes">Notas Adicionales</Label>
+                <Input
+                  id="additionalNotes"
+                  {...form.register("additionalNotes")}
+                  placeholder="Instrucciones especiales, alergias, etc."
+                />
+              </div>
+              <div className="mt-4">
+                <h4 className="font-semibold mb-2">Platos Seleccionados:</h4>
+                <div className="max-h-[200px] overflow-y-auto">
+                  {Object.entries(selectedDishes).map(([dishId, quantity]) => {
+                    const dish = parsedDishes
+                      .flatMap(({ dishes }) => dishes)
+                      .find((d) => d.id === dishId);
+                    if (!dish) return null;
+                    return (
+                      <div key={dishId} className="flex justify-between py-1">
+                        <span>{dish.name} x{quantity}</span>
+                        <span>{(dish.price * quantity) / 100} PLN</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex justify-between font-bold">
+                    <span>Total:</span>
+                    <span>{calculateTotal() / 100} PLN</span>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Confirmar Pedido</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Payment Dialog */}
+        <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Ordenar y Pagar</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={form.handleSubmit(handleSubmitOrder)} className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  {...form.register("name", { required: true })}
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Teléfono</Label>
+                <Input
+                  id="phone"
+                  {...form.register("phone", { required: true })}
+                  placeholder="Tu teléfono"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="locationInfo">Ubicación</Label>
+                <Input
+                  id="locationInfo"
+                  {...form.register("locationInfo", { required: true })}
+                  placeholder="Mesa 1, Delivery, etc."
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="additionalNotes">Notas Adicionales</Label>
+                <Input
+                  id="additionalNotes"
+                  {...form.register("additionalNotes")}
+                  placeholder="Instrucciones especiales, alergias, etc."
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Comprobante de Pago</Label>
+                <div className="border-2 border-dashed rounded-lg p-4 text-center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setPaymentProof(file);
+                      }
+                    }}
+                    className="w-full"
+                  />
+                  {paymentProof && (
+                    <div className="mt-2">
+                      <p className="text-sm text-green-600">Archivo seleccionado: {paymentProof.name}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4">
+                <h4 className="font-semibold mb-2">Platos Seleccionados:</h4>
+                <div className="max-h-[200px] overflow-y-auto">
+                  {Object.entries(selectedDishes).map(([dishId, quantity]) => {
+                    const dish = parsedDishes
+                      .flatMap(({ dishes }) => dishes)
+                      .find((d) => d.id === dishId);
+                    if (!dish) return null;
+                    return (
+                      <div key={dishId} className="flex justify-between py-1">
+                        <span>{dish.name} x{quantity}</span>
+                        <span>{(dish.price * quantity) / 100} PLN</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex justify-between font-bold">
+                    <span>Total:</span>
+                    <span>{calculateTotal() / 100} PLN</span>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button 
+                  type="submit"
+                  disabled={!paymentProof}
+                >
+                  Confirmar Pedido y Pago
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

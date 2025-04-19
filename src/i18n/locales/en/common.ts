@@ -2,17 +2,17 @@ import { type Resources } from "../types";
 
 const messages: Resources["common"] = {
   login: {
-    title: "Log in",
+    title: "Login",
     emailLabel: "Email",
     passwordLabel: "Password",
-    submitButton: "Log in",
-    forgotPasswordButton: "Forgot your password?",
+    submitButton: "Login",
+    forgotPasswordButton: "Forgot password?",
     registerButton: "Register",
   },
   register: {
     title: "Register",
     submitButton: "Register",
-    loginButton: "Log in",
+    loginButton: "Login",
     checkYourEmailForConfirmation: "Check your email for confirmation",
   },
   resetPassword: {
@@ -24,9 +24,9 @@ const messages: Resources["common"] = {
     passwordChangedSuccesfully: "Password changed successfully",
   },
   commonValidation: {
-    required: "This field is required",
-    email: "This field must be a valid email address",
-    passwordConfirm: "Passwords must match",
+    required: "Required",
+    email: "Invalid email format",
+    passwordConfirm: "Passwords do not match",
   },
   common: {
     emailLabel: "Email",
@@ -441,9 +441,10 @@ const messages: Resources["common"] = {
     menuNotFound: "Menu not found",
     subscriptionCancelled: "Subscription cancelled",
     subscriptionCancelledDescription:
-      "Feel free to give us feedback on how can we improve! support@feastqr.com",
+      "Let us know how we can improve! support@feastqr.com",
     somethingWentWrong: "Something went wrong.",
-    tryAgainLater: "Try again later.",
+    tryAgainLater: "Please try again later.",
+    newOrder: "New order"
   },
 };
 

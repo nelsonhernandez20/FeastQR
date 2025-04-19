@@ -440,6 +440,7 @@ const messages = {
       "Daj nam znać, co moglibyśmy zrobić lepiej na adres: support@feastqr.com",
     somethingWentWrong: "Coś poszło nie tak. ",
     tryAgainLater: "Spróbuj ponownie później.",
+    newOrder: "Nowe zamówienie",
   },
 };
 

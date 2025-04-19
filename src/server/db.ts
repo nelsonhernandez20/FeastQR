@@ -1,10 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { type PrismaClient as GeneratedPrismaClient } from "@prisma/client";
 
 import { env } from "~/env.mjs";
 
 // Evitar múltiples instancias de PrismaClient en desarrollo
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: GeneratedPrismaClient | undefined;
 };
 
 // Configuración para evitar el error de declaraciones preparadas duplicadas

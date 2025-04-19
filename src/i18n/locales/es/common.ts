@@ -441,9 +441,10 @@ const messages: Resources["common"] = {
     menuNotFound: "Menú no encontrado",
     subscriptionCancelled: "Suscripción cancelada",
     subscriptionCancelledDescription:
-      "¡No dudes en darnos tu opinión sobre cómo podemos mejorar! support@feastqr.com",
+      "¡Déjanos saber cómo podemos mejorar! support@feastqr.com",
     somethingWentWrong: "Algo salió mal.",
     tryAgainLater: "Inténtalo de nuevo más tarde.",
+    newOrder: "Nuevo pedido",
   },
 };
 
