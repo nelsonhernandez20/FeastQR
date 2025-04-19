@@ -36,7 +36,11 @@ export function DashboardPage() {
           {menus?.length ? (
             <div className="divide-y divide-border rounded-md border">
               {menus
-                .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+                .sort((a, b) => {
+                  const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                  const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                  return dateB - dateA;
+                })
                 .map((menu) => (
                   <MenuItem key={menu.id} menu={menu} />
                 ))}
