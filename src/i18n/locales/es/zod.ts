@@ -1,0 +1,116 @@
+import type { Resources } from "../types";
+
+const zodMessages = {
+  errors: {
+    invalid_type: "Se esperaba: {{expected}}, se recibió: {{received}}",
+    invalid_type_received_undefined: "Campo requerido",
+    invalid_literal: "Valor literal inválido, se esperaba: {{expected}}",
+    unrecognized_keys: "Clave(s) no reconocida(s) en el objeto: {{- keys}}",
+    invalid_union: "Valor inválido",
+    invalid_union_discriminator: "Valor del discriminador inválido. Se esperaba: {{- options}}",
+    invalid_enum_value: "Valor de enumeración inválido. Se esperaba: {{- options}}, se recibió: '{{received}}'",
+    invalid_arguments: "Argumentos de función inválidos",
+    invalid_return_type: "Tipo de retorno de función inválido",
+    invalid_date: "Fecha inválida",
+    custom: "Valor inválido",
+    invalid_intersection_types: "Los resultados de la intersección no pudieron ser unidos",
+    not_multiple_of: "El número debe ser múltiplo de {{multipleOf}}",
+    not_finite: "El número debe ser finito",
+    invalid_string: {
+      email: "Email inválido",
+      url: "URL inválida",
+      uuid: "UUID inválido",
+      cuid: "CUID inválido",
+      regex: "Valor inválido",
+      datetime: "Fecha y hora inválidas",
+      startsWith: 'Valor inválido: debe comenzar con "{{startsWith}}"',
+      endsWith: 'Valor inválido: debe terminar con "{{endsWith}}"',
+    },
+    too_small: {
+      array: {
+        exact: "El array debe contener exactamente {{minimum}} elemento(s)",
+        inclusive: "El array debe contener al menos {{minimum}} elemento(s)",
+        not_inclusive: "El array debe contener más de {{minimum}} elemento(s)",
+      },
+      string: {
+        exact: "El texto debe contener exactamente {{minimum}} carácter(es)",
+        inclusive: "El texto debe contener al menos {{minimum}} carácter(es)",
+        not_inclusive: "El texto debe contener más de {{minimum}} carácter(es)",
+      },
+      number: {
+        exact: "El número debe ser exactamente {{minimum}}",
+        inclusive: "El número debe ser mayor o igual a {{minimum}}",
+        not_inclusive: "El número debe ser mayor que {{minimum}}",
+      },
+      set: {
+        exact: "Valor inválido",
+        inclusive: "Valor inválido",
+        not_inclusive: "Valor inválido",
+      },
+      date: {
+        exact: "La fecha debe ser exactamente {{- minimum, datetime}}",
+        inclusive: "La fecha debe ser mayor o igual a {{- minimum, datetime}}",
+        not_inclusive: "La fecha debe ser mayor que {{- minimum, datetime}}",
+      },
+    },
+    too_big: {
+      array: {
+        exact: "El array debe contener exactamente {{maximum}} elemento(s)",
+        inclusive: "El array debe contener como máximo {{maximum}} elemento(s)",
+        not_inclusive: "El array debe contener menos de {{maximum}} elemento(s)",
+      },
+      string: {
+        exact: "El texto debe contener exactamente {{maximum}} carácter(es)",
+        inclusive: "El texto debe contener como máximo {{maximum}} carácter(es)",
+        not_inclusive: "El texto debe contener menos de {{maximum}} carácter(es)",
+      },
+      number: {
+        exact: "El número debe ser exactamente {{maximum}}",
+        inclusive: "El número debe ser menor o igual a {{maximum}}",
+        not_inclusive: "El número debe ser menor que {{maximum}}",
+      },
+      set: {
+        exact: "Valor inválido",
+        inclusive: "Valor inválido",
+        not_inclusive: "Valor inválido",
+      },
+      date: {
+        exact: "La fecha debe ser exactamente {{- maximum, datetime}}",
+        inclusive: "La fecha debe ser menor o igual a {{- maximum, datetime}}",
+        not_inclusive: "La fecha debe ser menor que {{- maximum, datetime}}",
+      },
+    },
+  },
+  validations: {
+    email: "correo electrónico",
+    url: "URL",
+    uuid: "UUID",
+    cuid: "CUID",
+    regex: "Regex",
+    datetime: "fecha y hora",
+  },
+  types: {
+    function: "función",
+    number: "número",
+    string: "texto",
+    nan: "NaN",
+    integer: "número entero",
+    float: "número decimal",
+    boolean: "booleano",
+    date: "fecha",
+    bigint: "BigInt",
+    undefined: "undefined",
+    symbol: "symbol",
+    null: "null",
+    array: "array",
+    object: "objeto",
+    unknown: "unknown",
+    promise: "promise",
+    void: "void",
+    never: "never",
+    map: "map",
+    set: "set",
+  },
+};
+
+export default zodMessages; 

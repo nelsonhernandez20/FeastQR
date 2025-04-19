@@ -72,7 +72,7 @@ export function detectLanguage() {
     languageFromCookie ||
     languageFromHeaders ||
     languageFromAcceptHeader ||
-    fallbackLng;
+    "es";
 
   return language;
 }
