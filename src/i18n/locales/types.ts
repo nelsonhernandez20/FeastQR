@@ -11,6 +11,13 @@ export type Resources = {
       tryAgainLater: string;
       newOrder: string;
     };
+    sidebar: {
+      menu: string;
+      restaurant: string;
+      QRMenu: string;
+      notifications: string;
+      edit: string;
+    };
   };
   zod: typeof zodMessages;
 };

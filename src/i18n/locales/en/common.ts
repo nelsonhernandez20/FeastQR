@@ -170,6 +170,7 @@ const messages: Resources["common"] = {
     menu: "Menu",
     restaurant: "Restaurant",
     QRMenu: "QR Menu",
+    notifications: "Notifications",
     edit: "Edit",
   },
   restaurantDashboard: {

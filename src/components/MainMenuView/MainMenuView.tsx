@@ -97,6 +97,18 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
 
   const handleSubmitOrder = async () => {
     try {
+      // Create order details string
+      const orderDetails = Object.entries(selectedDishes)
+        .map(([dishId, quantity]) => {
+          const dish = parsedDishes
+            .flatMap(({ dishes }) => dishes)
+            .find((d) => d.id === dishId);
+          if (!dish) return null;
+          return `${dish.name} x${quantity}\n${dish.price * quantity} PLN`;
+        })
+        .filter(Boolean)
+        .join(", ");
+
       if (paymentProof) {
         const base64 = await new Promise<string>((resolve) => {
           const reader = new FileReader();
@@ -118,13 +130,13 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           customerName: form.getValues("name"),
           customerPhone: form.getValues("phone"),
           customerEmail: form.getValues("email"),
-          title: t("notifications.newOrder", "New order"),
-          description: t("notifications.newOrder", "New order"),
+          title: orderDetails,
+          description: orderDetails,
           type: "ORDER",
           locationInfo: form.getValues("locationInfo"),
           additionalNotes: form.getValues("additionalNotes"),
           paymentAmount: calculateTotal(),
-          paymentCurrency: "USD",
+          paymentCurrency: "PLN",
           paymentDate: new Date(),
           paymentProofUrl: uploadResult.url,
         });
@@ -134,13 +146,13 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           customerName: form.getValues("name"),
           customerPhone: form.getValues("phone"),
           customerEmail: form.getValues("email"),
-          title: t("notifications.newOrder", "New order"),
-          description: t("notifications.newOrder", "New order"),
+          title: orderDetails,
+          description: orderDetails,
           type: "ORDER",
           locationInfo: form.getValues("locationInfo"),
           additionalNotes: form.getValues("additionalNotes"),
           paymentAmount: calculateTotal(),
-          paymentCurrency: "USD",
+          paymentCurrency: "PLN",
           paymentDate: new Date(),
         });
       }
