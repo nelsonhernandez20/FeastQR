@@ -5,6 +5,7 @@ import { type Provider } from "@supabase/supabase-js";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 import { FormInput } from "~/components/FormInput/FormInput";
 import { Icons } from "~/components/Icons";
@@ -29,6 +30,9 @@ const signInWithOauth = (provider: Provider) => {
 export function UserAuthForm() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = React.useState(false);
+  
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginValidationSchema(t)),
     defaultValues: {
@@ -36,18 +40,40 @@ export function UserAuthForm() {
       password: "",
     },
   });
+  
   const onSubmit = async (data: LoginFormValues) => {
-    const { error } = await supabase().auth.signInWithPassword(data);
+    try {
+      const { data: authData, error } = await supabase().auth.signInWithPassword(data);
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-        duration: 9000,
-      });
+      if (error) {
+        toast({
+          title: t("login.title"),
+          description: error.message,
+          variant: "destructive",
+          duration: 9000,
+        });
+        return;
+      }
 
-      return;
+      if (authData?.user) {
+        // Marcar que estamos en proceso de redirección para evitar mensajes de error
+        setIsRedirecting(true);
+        
+        // Usar setTimeout para asegurar que la redirección ocurra después de que el estado se actualice
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 100);
+      }
+    } catch (err) {
+      // Solo mostrar el error si no estamos en proceso de redirección
+      if (!isRedirecting) {
+        toast({
+          title: t("login.title"),
+          description: "Ha ocurrido un error al iniciar sesión",
+          variant: "destructive",
+          duration: 9000,
+        });
+      }
     }
   };
 
@@ -75,7 +101,7 @@ export function UserAuthForm() {
             </FormInput>
           )}
         />
-        <Button loading={form.formState.isSubmitting} type="submit">
+        <Button loading={form.formState.isSubmitting || isRedirecting} type="submit">
           {t("login.submitButton")}
         </Button>
       </form>
