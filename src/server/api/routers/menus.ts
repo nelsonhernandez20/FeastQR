@@ -22,6 +22,7 @@ import {
 } from "~/server/supabase/supabaseClient";
 import { checkIfSubscribed } from "~/shared/hooks/useUserSubscription";
 import { asOptionalField } from "~/utils/utils";
+import nodemailer from "nodemailer";
 
 const prepareTextForSlug = (text: string) => {
   return text.replace(" ", "-").toLowerCase();
@@ -134,6 +135,44 @@ const getFullMenu = async (slug: string, db: PrismaClient) =>
       },
     },
   });
+
+const sendOrderEmail = async ({
+  to,
+  subject,
+  text,
+}: {
+  to: string;
+  subject: string;
+  text: string;
+}) => {
+  try {
+    // Configurar el transporte de Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "nelsonvozjr@gmail.com", // Tu correo electrónico
+        pass: "kwfb bosg saqq clzj", // Tu contraseña de aplicación
+      },
+    });
+
+    // Opciones del correo
+    const mailOptions = {
+      from: "nelsonvozjr@gmail.com", // Remitente
+      to, // Destinatario
+      subject, // Asunto
+      text, // Contenido del correo
+    };
+
+    // Enviar el correo
+    await transporter.sendMail(mailOptions);
+    console.log("Correo enviado exitosamente a:", to);
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    throw new Error(
+      "No se pudo enviar el correo. Verifica los detalles del error.",
+    );
+  }
+};
 
 export const menusRouter = createTRPCRouter({
   getMenus: privateProcedure.query(async ({ ctx }) => {
@@ -692,7 +731,7 @@ export const menusRouter = createTRPCRouter({
           info: input.info,
         },
       });
-    }), 
+    }),
   getRestaurantInfo: publicProcedure
     .input(
       z.object({
@@ -710,7 +749,7 @@ export const menusRouter = createTRPCRouter({
           },
         },
       });
-  
+
       if (!menu || !menu.restaurantInfo) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -718,5 +757,93 @@ export const menusRouter = createTRPCRouter({
         });
       }
       return menu.restaurantInfo;
-    }), 
+    }),
+  getUserEmailByMenuSlug: publicProcedure
+    .input(
+      z.object({
+        menuSlug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const menu = await ctx.db.menus.findUnique({
+        where: { slug: input.menuSlug },
+        select: {
+          profiles: {
+            select: {
+              email: true,
+            },
+          },
+        },
+      });
+
+      if (!menu || !menu.profiles) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User email not found for the given menu",
+        });
+      }
+
+      return { email: menu.profiles.email };
+    }),
+
+  sendOrderNotification: publicProcedure
+    .input(
+      z.object({
+        menuSlug: z.string(),
+        orderDetails: z.string(),
+        customerName: z.string(),
+        customerPhone: z.string(),
+        locationInfo: z.string(),
+        aditionalNotes: z.string().nullable(),
+        paymentAmount: z.number(),
+        paymentProofUrl: z.string().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Obtener el correo del propietario del menú
+      const menu = await ctx.db.menus.findUnique({
+        where: { slug: input.menuSlug },
+        select: {
+          profiles: {
+            select: {
+              email: true, // Correo del propietario del menú
+            },
+          },
+        },
+      });
+
+      if (!menu || !menu.profiles) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User email not found for the given menu",
+        });
+      }
+
+      const userEmail = menu.profiles.email;
+
+      // Enviar el correo al propietario del menú
+      await sendOrderEmail({
+        to: userEmail,
+        subject: `Nuevo pedido de ${input.customerName}`,
+        text: `
+          Detalles del Pedido:
+          ${input.orderDetails}
+  
+          Información del Cliente:
+          Nombre: ${input.customerName}
+          Teléfono: ${input.customerPhone}
+          Ubicación: ${input.locationInfo}
+          Notas Adicionales: ${input.aditionalNotes || "N/A"}
+          Monto del Pago: ${input.paymentAmount} USD
+  
+          ${
+            input.paymentProofUrl
+              ? `Comprobante de Pago: ${input.paymentProofUrl}`
+              : ""
+          }
+        `,
+      });
+
+      return { success: true, message: "Correo enviado correctamente" };
+    }),
 });

@@ -56,13 +56,19 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
   const { data: restaurantInfo } = api.menus.getRestaurantInfo.useQuery({
     menuSlug: menu.slug,
   });
+  const { data: userEmail } = api.menus.getUserEmailByMenuSlug.useQuery({
+    menuSlug: menu.slug,
+  });
+  const sendOrderNotificationMutation =
+    api.menus.sendOrderNotification.useMutation();
+
+  const [email, setEmail] = useState(userEmail?.email ?? "");
   const defaultLanguage = getDefaultLanguage(menu.menuLanguages);
 
   if (!defaultLanguageSet.current) {
     setSelectedLanguage(defaultLanguage.languageId);
     defaultLanguageSet.current = true;
   }
-
   const parsedDishes = parseDishes(
     menu,
     selectedLanguage || defaultLanguage.languageId,
@@ -155,6 +161,16 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           paymentDate: new Date(),
           paymentProofUrl: uploadResult.url,
         });
+        await sendOrderNotificationMutation.mutateAsync({
+          menuSlug: menu.slug,
+          orderDetails,
+          customerName: form.getValues("name"),
+          customerPhone: form.getValues("phone"),
+          locationInfo: form.getValues("locationInfo"),
+          aditionalNotes: form.getValues("additionalNotes") ?? "",
+          paymentAmount: calculateTotal(),
+          paymentProofUrl: uploadResult.url,
+        });
       } else {
         await createNotificationMutation.mutateAsync({
           menuSlug: menu.slug,
@@ -169,6 +185,16 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           paymentAmount: calculateTotal(),
           paymentCurrency: "PLN",
           paymentDate: new Date(),
+        });
+        await sendOrderNotificationMutation.mutateAsync({
+          menuSlug: menu.slug,
+          orderDetails,
+          customerName: form.getValues("name"),
+          customerPhone: form.getValues("phone"),
+          locationInfo: form.getValues("locationInfo"),
+          aditionalNotes: form.getValues("additionalNotes") ?? "",
+          paymentAmount: calculateTotal(),
+          paymentProofUrl: null,
         });
       }
 
@@ -208,9 +234,11 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           </div>
         </div>
         {restaurantInfo?.info && (
-        <div className="px-4 border-[3px] border-green-400 rounded-lg mx-2">
-          <p className="text-green-600 font-semibold">{restaurantInfo?.info ?? ""}</p>
-        </div>
+          <div className="mx-2 rounded-lg border-[3px] border-green-400 px-4">
+            <p className="font-semibold text-green-600">
+              {restaurantInfo?.info ?? ""}
+            </p>
+          </div>
         )}
         <div className="sticky top-0 flex w-full flex-row items-center justify-between ">
           <CategoriesNavigation
