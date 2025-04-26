@@ -35,7 +35,7 @@ const Layout = ({ children }: PropsWithChildren) => {
         {children}
         {process.env.NEXT_PUBLIC_VERCEL_ENV !== "production" && (
           <div className="flex flex-col gap-2">
-            {testAccounts.map((account, index) => (
+            {/* {testAccounts.map((account, index) => (
               <div key={index} className="flex flex-col items-start ">
                 <button
                   onClick={() => {
@@ -52,7 +52,7 @@ const Layout = ({ children }: PropsWithChildren) => {
                   Register {account.email}
                 </button>
               </div>
-            ))}
+            ))} */}
           </div>
         )}
       </div>

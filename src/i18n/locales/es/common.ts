@@ -109,7 +109,7 @@ const messages: Resources["common"] = {
     descriptionPlaceholder: "Pierogi ruskie con cebolla frita y tocino.",
     dishName: "Nombre del Plato",
     dishDescription: "Descripción del Plato",
-    priceInPLN: "Precio (PLN)",
+    priceInUSD: "Precio (USD)",
     dishPhoto: "Foto del Plato",
     categoryLabel: "Categoría",
     macronutrientsButton: "Macronutrientes",
@@ -322,7 +322,7 @@ const messages: Resources["common"] = {
   dishVariantForm: {
     variantName: "Nombre de la Variante",
     variantDescription: "Descripción de la Variante",
-    priceInPLN: "Precio (PLN)",
+    priceInUSD: "Precio (USD)",
     variantNamePlaceholder: "Combo",
     variantDescriptionPlaceholder: "El combo incluye papas fritas y una bebida.",
   },

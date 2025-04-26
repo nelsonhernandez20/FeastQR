@@ -105,7 +105,7 @@ export function UserAuthForm() {
           {t("login.submitButton")}
         </Button>
       </form>
-      <button
+      {/* <button
         type="button"
         className={cn(buttonVariants({ variant: "outline" }), "flex gap-2")}
         onClick={() => {
@@ -114,7 +114,7 @@ export function UserAuthForm() {
       >
         <Icons.google width={16} />
         Google
-      </button>
+      </button> */}
     </Form>
   );
 }

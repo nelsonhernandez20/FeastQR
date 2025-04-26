@@ -46,7 +46,7 @@ export const Login = async () => {
           </Link>
         </div>
       </div>
-      <ContactUsCard />
+      {/* <ContactUsCard /> */}
     </div>
   );
 };

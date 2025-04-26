@@ -125,7 +125,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
             .flatMap(({ dishes }) => dishes)
             .find((d) => d.id === dishId);
           if (!dish) return null;
-          return `${dish.name} x${quantity}\n${dish.price * quantity} PLN`;
+          return `${dish.name} x${quantity}\n${dish.price * quantity} USD`;
         })
         .filter(Boolean)
         .join(", ");
@@ -157,7 +157,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           locationInfo: form.getValues("locationInfo"),
           additionalNotes: form.getValues("additionalNotes"),
           paymentAmount: calculateTotal(),
-          paymentCurrency: "PLN",
+          paymentCurrency: "USD",
           paymentDate: new Date(),
           paymentProofUrl: uploadResult.url,
         });
@@ -183,7 +183,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           locationInfo: form.getValues("locationInfo"),
           additionalNotes: form.getValues("additionalNotes"),
           paymentAmount: calculateTotal(),
-          paymentCurrency: "PLN",
+          paymentCurrency: "USD",
           paymentDate: new Date(),
         });
         await sendOrderNotificationMutation.mutateAsync({
@@ -436,7 +436,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                         <span>
                           {dish.name} x{quantity}
                         </span>
-                        <span>{(dish.price * quantity) / 100} PLN</span>
+                        <span>{(dish.price * quantity) / 100} USD</span>
                       </div>
                     );
                   })}
@@ -444,7 +444,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                 <div className="mt-4 border-t pt-4">
                   <div className="flex justify-between font-bold">
                     <span>Total:</span>
-                    <span>{calculateTotal() / 100} PLN</span>
+                    <span>{calculateTotal() / 100} USD</span>
                   </div>
                 </div>
               </div>
@@ -533,7 +533,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                         <span>
                           {dish.name} x{quantity}
                         </span>
-                        <span>{(dish.price * quantity) / 100} PLN</span>
+                        <span>{(dish.price * quantity) / 100} USD</span>
                       </div>
                     );
                   })}
@@ -541,7 +541,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                 <div className="mt-4 border-t pt-4">
                   <div className="flex justify-between font-bold">
                     <span>Total:</span>
-                    <span>{calculateTotal() / 100} PLN</span>
+                    <span>{calculateTotal() / 100} USD</span>
                   </div>
                 </div>
               </div>
@@ -574,7 +574,7 @@ const PriceCard = ({ price }: { price: number }) => {
   return (
     <div className="flex gap-1">
       <div className="text-sm">{price / 100}</div>
-      <span className="text-[9px]">PLN</span>
+      <span className="text-[9px]">USD</span>
     </div>
   );
 };

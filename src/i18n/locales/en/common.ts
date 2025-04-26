@@ -109,7 +109,7 @@ const messages: Resources["common"] = {
     descriptionPlaceholder: "Ruskie dumplings with fried onions and bacon.",
     dishName: "Dish Name",
     dishDescription: "Dish Description",
-    priceInPLN: "Price (PLN)",
+    priceInUSD: "Price (USD)",
     dishPhoto: "Dish Photo",
     categoryLabel: "Category",
     macronutrientsButton: "Macronutrients",
@@ -324,7 +324,7 @@ const messages: Resources["common"] = {
   dishVariantForm: {
     variantName: "Variant Name",
     variantDescription: "Variant Description",
-    priceInPLN: "Price (PLN)",
+    priceInUSD: "Price (USD)",
     variantNamePlaceholder: "Combo box",
     variantDescriptionPlaceholder: "Combo box includes fries and a drink.",
   },

@@ -65,30 +65,25 @@ export const LandingPage = async () => {
                 className="group flex w-fit items-center gap-3 rounded-xl bg-landing-text py-3 pl-4 pr-8 text-white hover:bg-black"
               >
                 <span className="rounded-full bg-white px-3 py-1 text-center text-xl font-bold text-landing-text group-hover:text-black">
-                  P
+                  V
                 </span>
                 <div className="flex flex-col text-left">
                   <span className="text-xs uppercase">
                     {t("landingPage.section1.featuredOn")}
                   </span>
-                  <span className="leading-tight">
-                    {t("landingPage.section1.productHunt")}
-                  </span>
+                  <span className="leading-tight">venezuela</span>
                 </div>
               </a>
               <a
-                href="https://tryhards.space/"
+                href="https://wa.me/584247607637"
                 target="_blank"
                 className="group flex w-fit items-center gap-3 rounded-xl bg-landing-text py-3 pl-4 pr-8 text-white hover:bg-black"
               >
                 <span className="rounded-full bg-white px-3 py-1 text-center text-xl font-bold text-landing-text group-hover:text-black">
-                  T
+                  W
                 </span>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs uppercase">
-                    {t("landingPage.section1.credit")}
-                  </span>
-                  <span className="leading-tight">Tryhards Inc</span>
+                  <span className="leading-tight">Contáctanos por WhatsAp</span>
                 </div>
               </a>
             </div>

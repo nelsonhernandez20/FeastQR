@@ -271,7 +271,7 @@ const DishItem = ({
               <div className="flex w-full flex-row items-center gap-3">
                 <p className="text-xl font-medium">{name}</p>
               </div>
-              <p className="text-sm ">{price / 100} PLN</p>
+              <p className="text-sm ">{price / 100} USD</p>
 
               <p className="text-xs text-muted-foreground">{description}</p>
               {menuLanguages.length !== translatedDishData.length && (
@@ -333,7 +333,7 @@ const DishItem = ({
                     <div className="flex flex-row items-center gap-2">
                       <p className="text-lg font-medium">{variant.name}</p>
                       {variant.price && (
-                        <p className=" text-sm">{variant.price / 100} PLN</p>
+                        <p className=" text-sm">{variant.price / 100} USD</p>
                       )}
                     </div>
 

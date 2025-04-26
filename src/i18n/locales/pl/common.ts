@@ -105,7 +105,7 @@ const messages = {
     descriptionPlaceholder: "Pierogi Ruskie z cebulką smażone na bekonie. ",
     dishName: "Nazwa dania",
     dishDescription: "Opis dania",
-    priceInPLN: "Cena (PLN)",
+    priceInUSD: "Cena (USD)",
     dishPhoto: "Zdjęcie dania",
     categoryLabel: "Kategoria",
     macronutrientsButton: "Makroskładniki",
@@ -319,7 +319,7 @@ const messages = {
   dishVariantForm: {
     variantName: "Nazwa wariantu",
     variantDescription: "Opis wariantu",
-    priceInPLN: "Cena (PLN)",
+    priceInUSD: "Cena (USD)",
     variantNamePlaceholder: "W zestawie",
     variantDescriptionPlaceholder: "W zestawie frytki i napój.",
   },
