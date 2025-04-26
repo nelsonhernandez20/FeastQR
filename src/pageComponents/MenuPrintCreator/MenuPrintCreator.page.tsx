@@ -74,7 +74,8 @@ export const MenuPrintCreatorPage = ({
     form.setValue("restaurantName", data.name);
     form.setValue("menuLogoImageUrl", data.logoImageUrl);
   }
-
+  const baseUrl =
+    process.env.NEXT_PUBLIC_URL_WEBSITE || "http://localhost:3000";
   return (
     <div className="flex w-full flex-col gap-6  px-8 md:flex-row">
       <div className="flex w-full max-w-[300px] grow flex-col gap-8">
@@ -192,7 +193,7 @@ export const MenuPrintCreatorPage = ({
       </div>
       <MenuPdfGenerator
         {...debouncedValues}
-        qrCodeUrl={`localhost:3000/menu/${slug}`}
+        qrCodeUrl={`${baseUrl}/menu/${slug}`}
         menuLogoImageUrl={data?.logoImageUrl ?? null}
       />
     </div>
