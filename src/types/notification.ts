@@ -19,4 +19,5 @@ export interface Notification {
   menuSlug: string;
   locationInfo: string | null;
   additionalNotes: string | null;
+  idNotification?: string;
 } 

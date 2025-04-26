@@ -90,15 +90,15 @@ console.log(notifications, "notifications")
               </span>
               {notification.isRead ? (
                 <button
-                  onClick={() => handleDelete(notification.id)}
+                  onClick={() => handleDelete(notification.idNotification?? "")}
                   className="rounded-full p-2 text-red-500 hover:bg-red-50"
                   title="Eliminar notificación"
                 >
-                  <Icons.trash className="h-5 w-5" />
+                  Eliminar
                 </button>
               ) : (
                 <button
-                  onClick={() => handleMarkAsRead(notification.id)}
+                  onClick={() => handleMarkAsRead(notification.idNotification ?? "")}
                   className="rounded-full p-2 hover:bg-gray-100"
                   title="Marcar como leída"
                 >
@@ -129,14 +129,15 @@ console.log(notifications, "notifications")
 
           {notification.paymentProofUrl && (
             <div className="mt-4">
-              <div className="relative h-48 w-full overflow-hidden rounded-lg border">
+              <div className="relative h-48 w-full overflow-hidden rounded-lg border cursor-pointer">
                 <Image
                   src={notification.paymentProofUrl}
                   alt={`Comprobante de pago${notification.paymentProofFilename ? ` - ${notification.paymentProofFilename}` : ''}`}
                   fill
                   className="object-contain"
                   unoptimized
-                />
+                  onClick={() => window.open(notification.paymentProofUrl ?? '#', "_blank")}
+                  />
               </div>
             </div>
           )}

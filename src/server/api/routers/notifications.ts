@@ -164,6 +164,7 @@ export const notificationsRouter = createTRPCRouter({
           n.payment_amount as "paymentAmount",
           n.payment_currency as "paymentCurrency",
           n.payment_date as "paymentDate",
+          n.id as "idNotification",
           n.created_at as "createdAt",
           n.updated_at as "updatedAt"
         FROM public.notifications n
