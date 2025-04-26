@@ -14,25 +14,40 @@ import { useTranslation } from "react-i18next";
 import { useUserSubscription } from "~/shared/hooks/useUserSubscription";
 import QRCode from "qrcode.react";
 import { SocialMediaHandlesForm } from "./molecules/SocialMediaHandles/SocialMediaHandles";
-import { openLemonSqueezy } from "~/utils/payments";
+import { type MenuWithProfile } from "~/types/menu";
+import { useEffect, useState } from "react";
 
 export const RestaurantDashboard = ({
   params: { slug },
 }: {
   params: { slug: string };
 }) => {
-  const { data, error, isLoading } = api.menus.getMenuBySlug.useQuery({ slug });
+  const { data, error, isLoading } = api.menus.getMenuBySlug.useQuery({ slug }) as {
+    data: MenuWithProfile | undefined;
+    error: unknown;
+    isLoading: boolean;
+  };
   const { toast } = useToast();
   const router = useRouter();
   const { t, i18n } = useTranslation();
-  const { isSubscribed } = useUserSubscription();
+  const { mutateAsync: addRestaurantInfo, isLoading: isSaving } =
+  api.menus.addRestaurantInfo.useMutation();
+  const { isSubscribed, isSubscriptionLoading } = useUserSubscription();
   const {
     mutateAsync: createPremiumCheckout,
     isLoading: isCreatePremiumCheckoutLoading,
   } = api.payments.createPremiumCheckout.useMutation();
+  const { data: restaurantInfo } = api.menus.getRestaurantInfo.useQuery({
+    menuSlug: slug,
+  });
   const { mutateAsync: publishMenu } = api.menus.publishMenu.useMutation();
   const { mutateAsync: unpublishMenu } = api.menus.unpublishMenu.useMutation();
-
+  const [info, setInfo] = useState("");
+  useEffect(() => {
+    if (restaurantInfo?.info) {
+      setInfo(restaurantInfo.info);
+    }
+  }, [restaurantInfo]);
   const handleTogglePublish = async () => {
     if (!data) return;
 
@@ -55,7 +70,7 @@ export const RestaurantDashboard = ({
     }
   };
 
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading || isSubscriptionLoading) return <LoadingScreen />;
 
   if (error) {
     toast({
@@ -65,6 +80,35 @@ export const RestaurantDashboard = ({
     });
     redirect("/dashboard");
   }
+
+  if (!data) {
+    return null;
+  }
+
+ 
+
+  const handleSaveInfo = async () => {
+    if (!data) return;
+
+    try {
+      await addRestaurantInfo({
+        menuId: data.id,
+        info,
+      });
+      toast({
+        title: t("restaurantDashboard.infoSaved"),
+        description: t("restaurantDashboard.infoSavedDescription"),
+      });
+    } catch (error) {
+      toast({
+        title: t("restaurantDashboard.errorSavingInfo"),
+        description: t("restaurantDashboard.errorSavingInfoDescription"),
+        variant: "destructive",
+      });
+    }
+  };
+
+
 
   return (
     <div className="flex w-full max-w-3xl flex-col  gap-6">
@@ -122,14 +166,11 @@ export const RestaurantDashboard = ({
           ) : (
             <Button
               variant="default"
-              loading={isCreatePremiumCheckoutLoading}
               size="lg"
-              onClick={async () => {
-                const checkoutUrl = await createPremiumCheckout({
-                  language: i18n.language as "en" | "pl",
-                });
-
-                openLemonSqueezy(checkoutUrl);
+              onClick={() => {
+                const message = `Hola quisera saber sobre los planes disponibles`;
+                const whatsappUrl = `https://wa.me/584247607637?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
               }}
             >
               {t("restaurantDashboard.upgradeAccount")}
@@ -157,7 +198,27 @@ export const RestaurantDashboard = ({
         </Link>
       </div>
       <hr />
-
+      <h2 className="text-xl font-semibold">
+        {t("restaurantDashboard.restaurantInfo")}
+      </h2>
+      <div className="flex flex-col gap-4">
+        <textarea
+          className="w-full rounded-lg border border-gray-300 p-2 text-lg"
+          rows={5}
+          placeholder={t("restaurantDashboard.infoPlaceholder")}
+          value={info}
+          onChange={(e) => setInfo(e.target.value)}
+        />
+        <Button
+          onClick={handleSaveInfo}
+          disabled={isSaving}
+          className="self-end"
+        >
+          {isSaving
+            ? t("restaurantDashboard.saving")
+            : t("restaurantDashboard.saveInfo")}
+        </Button>
+      </div>
       <div className="flex w-full grow flex-col gap-8 md:flex-row md:gap-0">
         <div className="flex w-full shrink grow flex-col items-center justify-center gap-4 border-r-2 border-secondary">
           <p className="text-3xl font-semibold">

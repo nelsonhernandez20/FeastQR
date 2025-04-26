@@ -30,6 +30,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (!req.cookies.has(cookieName)) {
+    response.cookies.set(cookieName, "es", {
+      expires: new Date(Date.now() + langaugeCookieExpirationTimeMs),
+    });
+    return response;
+  }
+
   const languageInSearchParams = acceptLanguage.get(
     req.nextUrl.searchParams.get(searchParamName),
   );
@@ -39,7 +46,7 @@ export async function middleware(req: NextRequest) {
     languageInSearchParams ||
     languageInCookie ||
     languageInAcceptHeader ||
-    fallbackLng;
+    "es";
 
   if (hasLanguageInHeader(req) || !languageInCookie) {
     response.cookies.set(cookieName, language, {

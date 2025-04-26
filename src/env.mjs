@@ -19,10 +19,10 @@ export const env = createEnv({
       .default("development"),
     SUPABASE_SERVICE_KEY: z.string().min(1),
     DIRECT_URL: z.string().min(1),
-    LEMON_SQUEEZY_API_KEY: z.string().min(1),
-    LEMONS_SQUEEZY_SIGNATURE_SECRET: z.string().min(1),
-    LEMON_SQUEEZY_STORE_ID: z.string().min(1),
-    LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID: z.string().min(1),
+    LEMON_SQUEEZY_API_KEY: z.string().optional(),
+    LEMONS_SQUEEZY_SIGNATURE_SECRET: z.string().optional(),
+    LEMON_SQUEEZY_STORE_ID: z.string().optional(),
+    LEMON_SQUEEZY_SUBSCRIPTION_VARIANT_ID: z.string().optional(),
   },
 
   /**

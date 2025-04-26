@@ -27,25 +27,6 @@ export function PricingSection() {
       tagColor: "bg-gray-200",
       tagTextColor: "text-black",
     },
-
-    {
-      name: t("landingPage.pricing.enterprise.name"),
-      price: t("landingPage.pricing.enterprise.price"),
-      yearlyPrice: t("landingPage.pricing.enterprise.yearlyPrice"),
-      description: t("landingPage.pricing.enterprise.description"),
-      features: [
-        t("landingPage.pricing.enterprise.feature1"),
-        t("landingPage.pricing.enterprise.feature2"),
-        t("landingPage.pricing.enterprise.feature3"),
-      ],
-      extraBenefits: t("landingPage.pricing.enterprise.extraBenefits"),
-      backgroundColor: "#ffffff",
-      borderColor: "#F2B53C",
-      buttonColor: "bg-[#F2B53C]",
-      buttonTextColor: "text-white",
-      tagColor: "bg-gray-200",
-      tagTextColor: "text-black",
-    },
   ];
 
   return (
@@ -53,10 +34,10 @@ export function PricingSection() {
       <div className="pricing-headline flex flex-col gap-y-2">
         <div className="flex flex-col items-center justify-center gap-y-3">
           <h3 className="mx-auto max-w-xs text-center text-3xl font-bold leading-[1.15] text-black sm:text-4xl md:mx-0 md:max-w-full">
-            Ready to start with us?
+            ¿Listo para comenzar con nosotros?
           </h3>
           <p className="text-sm text-slate-700/70">
-            Choose the best package that suits you
+            Elige el mejor paquete que se adapte a ti
           </p>
         </div>
         <div className="mt-8 flex justify-center">
@@ -108,7 +89,7 @@ export function PricingSection() {
                     className="tracking-tight"
                     style={{ color: option.buttonTextColor }}
                   >
-                    Choose Plan
+                    Haz clic para unirte
                   </span>
                   <Icons.arrowRight className="ml-2" />
                 </Link>

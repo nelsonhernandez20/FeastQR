@@ -29,9 +29,9 @@ export const AddVariantButton = ({
   return (
     <Dialog open={modalOpen} onOpenChange={(open) => setModalOpen(open)}>
       <DialogTrigger asChild>
-        <Button {...buttonProps}>
+        {/* <Button {...buttonProps}>
           {buttonText ?? t("addDishVariantButton.addVariant")}
-        </Button>
+        </Button> */}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

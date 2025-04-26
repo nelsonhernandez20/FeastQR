@@ -105,7 +105,7 @@ const messages = {
     descriptionPlaceholder: "Pierogi Ruskie z cebulką smażone na bekonie. ",
     dishName: "Nazwa dania",
     dishDescription: "Opis dania",
-    priceInPLN: "Cena (PLN)",
+    priceInUSD: "Cena (USD)",
     dishPhoto: "Zdjęcie dania",
     categoryLabel: "Kategoria",
     macronutrientsButton: "Makroskładniki",
@@ -187,6 +187,14 @@ const messages = {
     menuPublishedNotification: "Menu zostało opublikowane",
     menuPublishedNotificationDescription:
       "Twoje menu zostało opublikowane. Użytkownicy będą mogli zobaczyć Twoje menu.",
+    restaurantInfo: "Información del restaurante",
+    infoPlaceholder: "Escribe aquí la información del restaurante...",
+    saveInfo: "Guardar información",
+    saving: "Guardando...",
+    infoSaved: "Información guardada",
+    infoSavedDescription: "La información del restaurante se guardó correctamente.",
+    errorSavingInfo: "Error al guardar",
+    errorSavingInfoDescription: "Hubo un problema al guardar la información.",  
   },
   languageToggle: {
     toggleLanguage: "Zmień język",
@@ -311,7 +319,7 @@ const messages = {
   dishVariantForm: {
     variantName: "Nazwa wariantu",
     variantDescription: "Opis wariantu",
-    priceInPLN: "Cena (PLN)",
+    priceInUSD: "Cena (USD)",
     variantNamePlaceholder: "W zestawie",
     variantDescriptionPlaceholder: "W zestawie frytki i napój.",
   },
@@ -440,6 +448,7 @@ const messages = {
       "Daj nam znać, co moglibyśmy zrobić lepiej na adres: support@feastqr.com",
     somethingWentWrong: "Coś poszło nie tak. ",
     tryAgainLater: "Spróbuj ponownie później.",
+    newOrder: "Nowe zamówienie",
   },
 };
 

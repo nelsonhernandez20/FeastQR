@@ -10,7 +10,10 @@ export const checkIfSubscribed = (status?: string) => {
 };
 
 export const useUserSubscription = () => {
-  const { data, isLoading } = api.payments.getSubscriptionInfo.useQuery();
+  const { data, isLoading, refetch } = api.payments.getSubscriptionInfo.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
   const status = data?.status;
   const isSubscribed = checkIfSubscribed(status);
 
@@ -18,5 +21,6 @@ export const useUserSubscription = () => {
     subscriptionData: data,
     isSubscriptionLoading: isLoading,
     isSubscribed,
+    refetch,
   };
 };

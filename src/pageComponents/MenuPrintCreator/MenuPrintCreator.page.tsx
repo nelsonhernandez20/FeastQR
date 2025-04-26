@@ -40,7 +40,7 @@ export const MenuPrintCreatorPage = ({
       facebookName: "",
       instagramHandle: "",
       restaurantName: "",
-      menuLogoImageUrl: null,
+      menuLogoImageUrl: data?.logoImageUrl ?? null,
       ...initialCookiesFormValues,
     },
     resolver: zodResolver(printCreatorValidationSchema),
@@ -192,7 +192,7 @@ export const MenuPrintCreatorPage = ({
       </div>
       <MenuPdfGenerator
         {...debouncedValues}
-        qrCodeUrl={`www.feastqr.com/menu/${slug}`}
+        qrCodeUrl={`localhost:3000/menu/${slug}`}
         menuLogoImageUrl={data?.logoImageUrl ?? null}
       />
     </div>

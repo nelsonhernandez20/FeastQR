@@ -20,6 +20,10 @@ type LanguageMap = {
 };
 
 const languagesMap: LanguageMap = {
+  es: {
+    label: "Español",
+    icon: "🇪🇸",
+  },
   pl: {
     label: "Polski",
     icon: "🇵🇱",

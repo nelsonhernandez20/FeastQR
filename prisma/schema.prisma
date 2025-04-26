@@ -142,6 +142,7 @@ model RefreshTokens {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model SamlProviders {
   id               String       @id @db.Uuid
   ssoProviderId    String       @map("sso_provider_id") @db.Uuid
@@ -160,6 +161,7 @@ model SamlProviders {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model SamlRelayStates {
   id            String       @id @db.Uuid
   ssoProviderId String       @map("sso_provider_id") @db.Uuid
@@ -405,7 +407,9 @@ model Menus {
   categories         Categories[]
   dishes             Dishes[]
   menuLanguages      MenuLanguages[]
+  notifications      Notifications[]
   profiles           Profiles        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  restaurantInfo     RestaurantInfo?  @relation("MenuToRestaurantInfo") // Relación inversa
 
   @@index([slug], map: "idx_menus_slug")
   @@map("menus")
@@ -530,5 +534,50 @@ enum TagType {
   lactose_free
 
   @@map("tag_type")
+  @@schema("public")
+}
+
+model Notifications {
+  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuSlug          String    @map("menu_slug")
+  customerName      String?   @map("customer_name")
+  customerPhone     String?   @map("customer_phone") @db.VarChar(50)
+  customerEmail     String?   @map("customer_email")
+  title             String    @db.VarChar(255)
+  description       String    @db.Text
+  type             String    @db.VarChar(50)
+  isRead           Boolean?  @default(false) @map("is_read")
+  locationInfo      String?   @map("location_info")
+  additionalNotes   String?   @map("additional_notes") @db.Text
+  paymentProofUrl   String?   @map("payment_proof_url") @db.Text
+  paymentProofFilename String? @map("payment_proof_filename") @db.Text
+  paymentProofBucket String?  @map("payment_proof_bucket") @db.Text
+  paymentProofPath  String?   @map("payment_proof_path") @db.Text
+  paymentAmount     Decimal?  @map("payment_amount") @db.Decimal(10, 2)
+  paymentCurrency   String?   @default("USD") @map("payment_currency") @db.VarChar(3)
+  paymentDate       DateTime? @map("payment_date") @db.Timestamptz(6)
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  menus             Menus     @relation(fields: [menuSlug], references: [slug], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([isRead], map: "idx_notifications_is_read")
+  @@index([paymentDate], map: "idx_notifications_payment_date")
+  @@index([customerEmail], map: "idx_notifications_customer_email")
+  @@index([createdAt], map: "idx_notifications_created_at")
+  @@index([menuSlug], map: "idx_notifications_menu_slug")
+  @@index([locationInfo], map: "idx_notifications_location_info")
+  @@map("notifications")
+  @@schema("public")
+}
+
+model RestaurantInfo {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuId      String   @unique @map("menu_id") @db.Uuid // Agregamos @unique
+  info        String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  menus       Menus    @relation("MenuToRestaurantInfo", fields: [menuId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("restaurant_info")
   @@schema("public")
 }

@@ -16,7 +16,7 @@ const sidebarNavItems: SidebarNavItem[] = [
   {
     title: <TranslatedText id="sidebar.restaurant" />,
     href: "/menu/manage/[slug]/restaurant",
-    icon: "menu",
+    icon: "menuSquare",
   },
   {
     title: <TranslatedText id="sidebar.menu" />,
@@ -29,10 +29,15 @@ const sidebarNavItems: SidebarNavItem[] = [
     icon: "qrcode",
   },
   {
-    title: <TranslatedText id="sidebar.edit" />,
-    href: "/menu/manage/[slug]/edit",
-    icon: "edit",
-  },
+    title: <TranslatedText id="sidebar.notifications" />,
+    href: "/menu/manage/[slug]/notifications",
+    icon: "warning",
+  }
+  // {
+  //   title: <TranslatedText id="sidebar.edit" />,
+  //   href: "/menu/manage/[slug]/edit",
+  //   icon: "edit",
+  // },
 ];
 
 export function Sidebar() {

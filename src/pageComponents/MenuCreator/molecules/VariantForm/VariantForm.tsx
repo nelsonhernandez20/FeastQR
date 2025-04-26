@@ -143,7 +143,7 @@ export const DishVariantForm = ({
             control={form.control}
             name="price"
             render={({ field }) => (
-              <FormInput label={t("dishVariantForm.priceInPLN")}>
+              <FormInput label={t("dishVariantForm.priceInUSD")}>
                 <Input {...field} type="number" placeholder="10.99" />
               </FormInput>
             )}

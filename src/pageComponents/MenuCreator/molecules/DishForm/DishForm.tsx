@@ -224,7 +224,7 @@ export const DishForm = ({
             control={form.control}
             name="price"
             render={({ field }) => (
-              <FormInput label={t("dishForm.priceInPLN")}>
+              <FormInput label={t("dishForm.priceInUSD")}>
                 <Input {...field} type="number" placeholder="10.99" />
               </FormInput>
             )}

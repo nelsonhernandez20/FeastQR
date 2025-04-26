@@ -70,7 +70,11 @@ const CancelButton = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("billing.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={() => void cancelSubscription()}>
+            <AlertDialogAction
+              onClick={() => {
+                window.open("https://wa.me/584247607637", "_blank");
+              }}
+            >
               {t("billing.continue")}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -140,26 +144,8 @@ export function BillingForm() {
             {subscriptionData?.status !== "cancelled" && (
               <button
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onClick={async () => {
-                  if (isSubscribed) {
-                    openLemonSqueezy(subscriptionData?.updatePaymentUrl || "");
-
-                    return;
-                  }
-
-                  const checkoutUrl = await mutateAsync({
-                    language: i18n.language as "en" | "pl",
-                  });
-
-                  if (checkoutUrl) {
-                    openLemonSqueezy(checkoutUrl);
-                  } else {
-                    toast({
-                      title: "Error",
-                      description: t("notifications.somethingWentWrong"),
-                      variant: "destructive",
-                    });
-                  }
+                onClick={() => {
+                  window.open("https://wa.me/584247607637", "_blank");
                 }}
                 className={cn(buttonVariants())}
                 disabled={isCreatePremiumCheckoutLoading}

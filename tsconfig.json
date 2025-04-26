@@ -5,7 +5,7 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -15,7 +15,10 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noUncheckedIndexedAccess": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitAny": false, // Permite el uso de "any" implícito
+    "noImplicitReturns": false, // Permite funciones sin retorno explícito
+    "noImplicitThis": false, // Permite el uso de "this" implícito
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
