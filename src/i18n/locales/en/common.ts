@@ -194,6 +194,14 @@ const messages: Resources["common"] = {
     menuPublishedNotification: "Menu has been published",
     menuPublishedNotificationDescription:
       "Your menu has been published. Users will be able to see your menu.",
+    restaurantInfo: "Información del restaurante",
+    infoPlaceholder: "Escribe aquí la información del restaurante...",
+    saveInfo: "Guardar información",
+    saving: "Guardando...",
+    infoSaved: "Información guardada",
+    infoSavedDescription: "La información del restaurante se guardó correctamente.",
+    errorSavingInfo: "Error al guardar",
+    errorSavingInfoDescription: "Hubo un problema al guardar la información.",   
   },
   languageToggle: {
     toggleLanguage: "Toggle Language",

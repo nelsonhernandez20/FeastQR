@@ -191,8 +191,15 @@ const messages: Resources["common"] = {
     menuUnpublishedNotificationDescription:
       "Tu menú ha sido despublicado. Los usuarios no podrán ver tu menú.",
     menuPublishedNotification: "El menú ha sido publicado",
-    menuPublishedNotificationDescription:
-      "Tu menú ha sido publicado. Los usuarios podrán ver tu menú.",
+    menuPublishedNotificationDescription: "Tu menú ha sido publicado. Los usuarios podrán ver tu menú.", 
+    restaurantInfo: "Información del restaurante",
+    infoPlaceholder: "Escribe aquí la información del restaurante...",
+    saveInfo: "Guardar información",
+    saving: "Guardando...",
+    infoSaved: "Información guardada",
+    infoSavedDescription: "La información del restaurante se guardó correctamente.",
+    errorSavingInfo: "Error al guardar",
+    errorSavingInfoDescription: "Hubo un problema al guardar la información.",
   },
   languageToggle: {
     toggleLanguage: "Cambiar Idioma",

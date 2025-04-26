@@ -676,4 +676,47 @@ export const menusRouter = createTRPCRouter({
         },
       });
     }),
+  addRestaurantInfo: privateProcedure
+    .input(
+      z.object({
+        menuId: z.string(),
+        info: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.restaurantInfo.upsert({
+        where: { menuId: input.menuId },
+        update: { info: input.info },
+        create: {
+          menuId: input.menuId,
+          info: input.info,
+        },
+      });
+    }), 
+  getRestaurantInfo: publicProcedure
+    .input(
+      z.object({
+        menuSlug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const menu = await ctx.db.menus.findUnique({
+        where: { slug: input.menuSlug },
+        select: {
+          restaurantInfo: {
+            select: {
+              info: true,
+            },
+          },
+        },
+      });
+  
+      if (!menu || !menu.restaurantInfo) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Restaurant information not found",
+        });
+      }
+      return menu.restaurantInfo;
+    }), 
 });

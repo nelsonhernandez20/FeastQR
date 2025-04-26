@@ -187,6 +187,14 @@ const messages = {
     menuPublishedNotification: "Menu zostało opublikowane",
     menuPublishedNotificationDescription:
       "Twoje menu zostało opublikowane. Użytkownicy będą mogli zobaczyć Twoje menu.",
+    restaurantInfo: "Información del restaurante",
+    infoPlaceholder: "Escribe aquí la información del restaurante...",
+    saveInfo: "Guardar información",
+    saving: "Guardando...",
+    infoSaved: "Información guardada",
+    infoSavedDescription: "La información del restaurante se guardó correctamente.",
+    errorSavingInfo: "Error al guardar",
+    errorSavingInfoDescription: "Hubo un problema al guardar la información.",  
   },
   languageToggle: {
     toggleLanguage: "Zmień język",

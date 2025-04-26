@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
@@ -39,13 +45,17 @@ interface OrderFormData extends FieldValues {
 export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
   const defaultLanguageSet = useRef(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const [selectedDishes, setSelectedDishes] = useState<Record<string, number>>({});
+  const [selectedDishes, setSelectedDishes] = useState<Record<string, number>>(
+    {},
+  );
   const [showOrderDialog, setShowOrderDialog] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
   const form = useForm<OrderFormData>();
   const { t } = useTranslation();
-
+  const { data: restaurantInfo } = api.menus.getRestaurantInfo.useQuery({
+    menuSlug: menu.slug,
+  });
   const defaultLanguage = getDefaultLanguage(menu.menuLanguages);
 
   if (!defaultLanguageSet.current) {
@@ -59,29 +69,32 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
   );
 
   const handleQuantityChange = (dishId: string, change: number) => {
-    setSelectedDishes(prev => {
+    setSelectedDishes((prev) => {
       const currentQuantity = prev[dishId] || 0;
       const newQuantity = Math.max(0, currentQuantity + change);
-      
+
       if (newQuantity === 0) {
         const { [dishId]: _, ...rest } = prev;
         return rest;
       }
-      
+
       return {
         ...prev,
-        [dishId]: newQuantity
+        [dishId]: newQuantity,
       };
     });
   };
 
   const calculateTotal = () => {
-    return Object.entries(selectedDishes).reduce((total, [dishId, quantity]) => {
-      const dish = parsedDishes
-        .flatMap(({ dishes }) => dishes)
-        .find((d) => d.id === dishId);
-      return total + (dish?.price || 0) * quantity;
-    }, 0);
+    return Object.entries(selectedDishes).reduce(
+      (total, [dishId, quantity]) => {
+        const dish = parsedDishes
+          .flatMap(({ dishes }) => dishes)
+          .find((d) => d.id === dishId);
+        return total + (dish?.price || 0) * quantity;
+      },
+      0,
+    );
   };
 
   const handleOrder = (withPayment: boolean) => {
@@ -92,8 +105,10 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
     }
   };
 
-  const uploadPaymentProofMutation = api.upload.uploadPaymentProof.useMutation();
-  const createNotificationMutation = api.notifications.createNotification.useMutation();
+  const uploadPaymentProofMutation =
+    api.upload.uploadPaymentProof.useMutation();
+  const createNotificationMutation =
+    api.notifications.createNotification.useMutation();
 
   const handleSubmitOrder = async () => {
     try {
@@ -165,7 +180,9 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
       toast.success(t("notifications.newOrder", "New order"));
     } catch (error) {
       console.error(error);
-      toast.error(t("notifications.somethingWentWrong", "Something went wrong"));
+      toast.error(
+        t("notifications.somethingWentWrong", "Something went wrong"),
+      );
     }
   };
 
@@ -190,6 +207,11 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
             </p>
           </div>
         </div>
+        {restaurantInfo?.info && (
+        <div className="px-4 border-[3px] border-green-400 rounded-lg mx-2">
+          <p className="text-green-600 font-semibold">{restaurantInfo?.info ?? ""}</p>
+        </div>
+        )}
         <div className="sticky top-0 flex w-full flex-row items-center justify-between ">
           <CategoriesNavigation
             categories={parsedDishes
@@ -218,10 +240,15 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                   )}
                   <ul className="flex flex-wrap gap-2 px-2">
                     {dishes.map((dish) => {
-                      const translatedTags = dish.dishesTag.map(({ tagName }) => {
-                        const translationKey = tagsTranslations[tagName as TagType];
-                        return translationKey ? t(translationKey, tagName) : tagName;
-                      }) as string[];
+                      const translatedTags = dish.dishesTag.map(
+                        ({ tagName }) => {
+                          const translationKey =
+                            tagsTranslations[tagName as TagType];
+                          return translationKey
+                            ? t(translationKey, tagName)
+                            : tagName;
+                        },
+                      ) as string[];
 
                       return (
                         <li
@@ -250,7 +277,9 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                               <Tags tags={translatedTags} />
                               <div className="mt-2 flex items-center gap-2">
                                 <button
-                                  onClick={() => handleQuantityChange(dish.id, -1)}
+                                  onClick={() =>
+                                    handleQuantityChange(dish.id, -1)
+                                  }
                                   className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
                                 >
                                   -
@@ -259,7 +288,9 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                                   {selectedDishes[dish.id] || 0}
                                 </span>
                                 <button
-                                  onClick={() => handleQuantityChange(dish.id, 1)}
+                                  onClick={() =>
+                                    handleQuantityChange(dish.id, 1)
+                                  }
                                   className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
                                 >
                                   +
@@ -328,7 +359,10 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
             <DialogHeader>
               <DialogTitle>Confirmar Pedido</DialogTitle>
             </DialogHeader>
-            <form onSubmit={form.handleSubmit(handleSubmitOrder)} className="grid gap-4 py-4">
+            <form
+              onSubmit={form.handleSubmit(handleSubmitOrder)}
+              className="grid gap-4 py-4"
+            >
               <div className="grid gap-2">
                 <Label htmlFor="name">Nombre</Label>
                 <Input
@@ -362,7 +396,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                 />
               </div>
               <div className="mt-4">
-                <h4 className="font-semibold mb-2">Platos Seleccionados:</h4>
+                <h4 className="mb-2 font-semibold">Platos Seleccionados:</h4>
                 <div className="max-h-[200px] overflow-y-auto">
                   {Object.entries(selectedDishes).map(([dishId, quantity]) => {
                     const dish = parsedDishes
@@ -371,13 +405,15 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                     if (!dish) return null;
                     return (
                       <div key={dishId} className="flex justify-between py-1">
-                        <span>{dish.name} x{quantity}</span>
+                        <span>
+                          {dish.name} x{quantity}
+                        </span>
                         <span>{(dish.price * quantity) / 100} PLN</span>
                       </div>
                     );
                   })}
                 </div>
-                <div className="mt-4 pt-4 border-t">
+                <div className="mt-4 border-t pt-4">
                   <div className="flex justify-between font-bold">
                     <span>Total:</span>
                     <span>{calculateTotal() / 100} PLN</span>
@@ -397,7 +433,10 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
             <DialogHeader>
               <DialogTitle>Ordenar y Pagar</DialogTitle>
             </DialogHeader>
-            <form onSubmit={form.handleSubmit(handleSubmitOrder)} className="grid gap-4 py-4">
+            <form
+              onSubmit={form.handleSubmit(handleSubmitOrder)}
+              className="grid gap-4 py-4"
+            >
               <div className="grid gap-2">
                 <Label htmlFor="name">Nombre</Label>
                 <Input
@@ -432,7 +471,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
               </div>
               <div className="grid gap-2">
                 <Label>Comprobante de Pago</Label>
-                <div className="border-2 border-dashed rounded-lg p-4 text-center">
+                <div className="rounded-lg border-2 border-dashed p-4 text-center">
                   <input
                     type="file"
                     accept="image/*"
@@ -446,13 +485,15 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                   />
                   {paymentProof && (
                     <div className="mt-2">
-                      <p className="text-sm text-green-600">Archivo seleccionado: {paymentProof.name}</p>
+                      <p className="text-sm text-green-600">
+                        Archivo seleccionado: {paymentProof.name}
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
               <div className="mt-4">
-                <h4 className="font-semibold mb-2">Platos Seleccionados:</h4>
+                <h4 className="mb-2 font-semibold">Platos Seleccionados:</h4>
                 <div className="max-h-[200px] overflow-y-auto">
                   {Object.entries(selectedDishes).map(([dishId, quantity]) => {
                     const dish = parsedDishes
@@ -461,13 +502,15 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                     if (!dish) return null;
                     return (
                       <div key={dishId} className="flex justify-between py-1">
-                        <span>{dish.name} x{quantity}</span>
+                        <span>
+                          {dish.name} x{quantity}
+                        </span>
                         <span>{(dish.price * quantity) / 100} PLN</span>
                       </div>
                     );
                   })}
                 </div>
-                <div className="mt-4 pt-4 border-t">
+                <div className="mt-4 border-t pt-4">
                   <div className="flex justify-between font-bold">
                     <span>Total:</span>
                     <span>{calculateTotal() / 100} PLN</span>
@@ -475,10 +518,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                 </div>
               </div>
               <DialogFooter>
-                <Button 
-                  type="submit"
-                  disabled={!paymentProof}
-                >
+                <Button type="submit" disabled={!paymentProof}>
                   Confirmar Pedido y Pago
                 </Button>
               </DialogFooter>
