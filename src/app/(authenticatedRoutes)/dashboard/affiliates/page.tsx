@@ -8,11 +8,11 @@ export default async function Page() {
   return (
     <DashboardShell className="flex-1">
       <DashboardHeader
-        heading={t("affiliates.title")}
-        text={t("affiliates.description")}
+        heading={'Afiliados'}
+        text={"Gestiona tu sistema de afiliados"}
       />
       <div className="flex w-full justify-center">
-        <h1 className="text-3xl font-medium">{t("affiliates.comingSoon")}</h1>
+        <h1 className="text-3xl font-medium">{"¡Próximamente!"}</h1>
       </div>
     </DashboardShell>
   );

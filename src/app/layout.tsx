@@ -16,18 +16,18 @@ export async function generateMetadata() {
   const { t } = await useServerTranslation();
 
   return {
-    title: t("globalMetadata.title"),
-    description: t("globalMetadata.title"),
-    keywords: (t("globalMetadata.keywords") as string).split(","),
+    title: "Menú en Línea para tu Restaurante",
+    description: "Crea y personaliza menús en línea y genera tus propios códigos QR para brindar a tus clientes comodidad y pedidos rápidos.",
+    keywords: ("menú, restaurante, en línea, QR, pedidos, comida, restaurantes, restaurante, gastronomía" as string).split(","),
     category: "restaurant menu builder",
     metadataBase: new URL("https://www.feastqr.com/"),
     openGraph: {
       type: "website",
-      locale: t("globalMetadata.openGraph.locale"),
-      title: t("globalMetadata.openGraph.title"),
+      locale: "Menú en Línea para tu Restaurante",
+      title: "Menú en Línea para tu Restaurante",
       url: "https://www.feastqr.com/",
-      description: t("globalMetadata.openGraph.description"),
-      siteName: t("globalMetadata.openGraph.siteName"),
+      description: "Crea y personaliza menús en línea y genera tus propios códigos QR para brindar a tus clientes comodidad y pedidos rápidos.",
+      siteName: "FeastQR - crea tu menú en línea",
     },
     robots: {
       follow: true,
@@ -35,8 +35,8 @@ export async function generateMetadata() {
     },
     twitter: {
       card: "summary_large_image",
-      title: t("globalMetadata.twitter.title"),
-      description: t("globalMetadata.twitter.description"),
+      title: "#",
+      description: "Crea y personaliza menús en línea y genera tus propios códigos QR para brindar a tus clientes comodidad y pedidos rápidos.",
       site: "@feastqr",
     },
   } satisfies Metadata;

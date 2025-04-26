@@ -3,7 +3,7 @@ import { Icons } from "../Icons";
 import { type PrintCreatorFormValues } from "~/pageComponents/MenuPrintCreator/MenuPrintCreator.schema";
 
 type MenuCardProps = PrintCreatorFormValues & {
-  qrCodeUrl: string;
+  qrCodeUrl?: string;
 };
 
 export const MenuCard = ({

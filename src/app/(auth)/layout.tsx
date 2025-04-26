@@ -28,7 +28,7 @@ const Layout = ({ children }: PropsWithChildren) => {
           >
             <>
               <Icons.chevronLeft className="mr-2 h-4 w-4" />
-              {t("common.backButton")}
+              Regresar
             </>
           </Button>
         </Link>

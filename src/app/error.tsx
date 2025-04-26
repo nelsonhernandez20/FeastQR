@@ -19,17 +19,17 @@ export default function ErrorPage({
       <div className="-mt-6 flex grow items-center justify-center gap-4 bg-gray-100">
         <div className="flex h-full flex-col items-center justify-center gap-4 ">
           <h1 className="text-5xl font-bold text-gray-800">
-            {t("errorPage.title")}
+            Ha Ocurrido un Error
           </h1>
           <p className="text-2xl font-medium text-gray-800">
-            {t("errorPage.description")}
+            Nos disculpamos! Si el problema persiste, por favor contáctanos en
           </p>
           <p className="text-lg">support@feastqr.com</p>
           <div className="flex flex-row justify-between">
-            <Button onClick={() => reset()}>{t("errorPage.tryAgain")}</Button>
+            <Button onClick={() => reset()}>Intentar de nuevo</Button>
           </div>
           <Link href="/" className="mt-4 text-xl underline">
-            {t("errorPage.goBack")}
+            Volver a la página principal
           </Link>
         </div>
       </div>
