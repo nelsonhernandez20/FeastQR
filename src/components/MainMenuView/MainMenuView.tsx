@@ -125,7 +125,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
             .flatMap(({ dishes }) => dishes)
             .find((d) => d.id === dishId);
           if (!dish) return null;
-          return `${dish.name} x${quantity}\n${dish.price * quantity} USD`;
+          return `${dish.name} x${quantity}\n${(dish.price * quantity) / 100} USD`;
         })
         .filter(Boolean)
         .join(", ");
@@ -156,7 +156,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           type: "ORDER",
           locationInfo: form.getValues("locationInfo"),
           additionalNotes: form.getValues("additionalNotes"),
-          paymentAmount: calculateTotal(),
+          paymentAmount: calculateTotal() / 100,
           paymentCurrency: "USD",
           paymentDate: new Date(),
           paymentProofUrl: uploadResult.url,
@@ -168,7 +168,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           customerPhone: form.getValues("phone"),
           locationInfo: form.getValues("locationInfo"),
           aditionalNotes: form.getValues("additionalNotes") ?? "",
-          paymentAmount: calculateTotal(),
+          paymentAmount: calculateTotal() / 100,
           paymentProofUrl: uploadResult.url,
         });
       } else {
@@ -182,7 +182,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           type: "ORDER",
           locationInfo: form.getValues("locationInfo"),
           additionalNotes: form.getValues("additionalNotes"),
-          paymentAmount: calculateTotal(),
+          paymentAmount: calculateTotal() / 100,
           paymentCurrency: "USD",
           paymentDate: new Date(),
         });
@@ -193,7 +193,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
           customerPhone: form.getValues("phone"),
           locationInfo: form.getValues("locationInfo"),
           aditionalNotes: form.getValues("additionalNotes") ?? "",
-          paymentAmount: calculateTotal(),
+          paymentAmount: calculateTotal() / 100,
           paymentProofUrl: null,
         });
       }
