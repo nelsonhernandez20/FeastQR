@@ -150,14 +150,14 @@ const sendOrderEmail = async ({
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "nelsonvozjr@gmail.com", // Tu correo electrónico
-        pass: "kwfb bosg saqq clzj", // Tu contraseña de aplicación
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_APP_PASSWORD,
       },
     });
 
     // Opciones del correo
     const mailOptions = {
-      from: "nelsonvozjr@gmail.com", // Remitente
+      from: process.env.EMAIL_USER,
       to, // Destinatario
       subject, // Asunto
       text, // Contenido del correo
