@@ -182,7 +182,7 @@ export const LandingPage = async () => {
         </section>
         <PricingSection />
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
