@@ -51,6 +51,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
   const [showOrderDialog, setShowOrderDialog] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<OrderFormData>();
   const { t } = useTranslation();
   const { data: restaurantInfo } = api.menus.getRestaurantInfo.useQuery({
@@ -118,6 +119,7 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
 
   const handleSubmitOrder = async () => {
     try {
+      setIsSubmitting(true);
       // Create order details string
       const orderDetails = Object.entries(selectedDishes)
         .map(([dishId, quantity]) => {
@@ -209,6 +211,8 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
       toast.error(
         t("notifications.somethingWentWrong", "Something went wrong"),
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -449,7 +453,9 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Confirmar Pedido</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Enviando..." : "Confirmar Pedido"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -546,8 +552,8 @@ export const MainMenuView = ({ menu }: { menu: FullMenuOutput }) => {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" disabled={!paymentProof}>
-                  Confirmar Pedido y Pago
+                <Button type="submit" disabled={!paymentProof || isSubmitting}>
+                  {isSubmitting ? "Enviando..." : "Confirmar Pedido y Pago"}
                 </Button>
               </DialogFooter>
             </form>
